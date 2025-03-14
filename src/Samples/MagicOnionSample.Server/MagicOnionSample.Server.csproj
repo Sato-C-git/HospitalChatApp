@@ -10,4 +10,8 @@
     <PackageReference Include="MagicOnion.Server" Version="7.0.2" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\MagicOnionSample.Shared\MagicOnionSample.Shared.csproj" />
+  </ItemGroup>
+
 </Project>

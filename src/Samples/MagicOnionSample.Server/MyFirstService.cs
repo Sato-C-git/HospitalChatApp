@@ -1,7 +1,8 @@
 ﻿using MagicOnion;
 using MagicOnion.Server;
+using MagicOnionSample.Shared.Services;
 
-namespace MagicOnionSample.Shared.Services;
+namespace MagicOnionSample.Server;
 
 
 public class MyFirstService : ServiceBase<IMyFirstService>, IMyFirstService
