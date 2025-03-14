@@ -1,6 +1,8 @@
 ﻿using System;
 using MagicOnion;
 
+
+
 namespace MagicOnionSample.Shared.Services
 {
     // Defines .NET interface as a Server/Client IDL.
@@ -10,4 +12,12 @@ namespace MagicOnionSample.Shared.Services
         // The return type must be `UnaryResult<T>` or `UnaryResult`.
         UnaryResult<int> SumAsync(int x, int y);
     }
+
+
+
+    public interface ICommonHub
+    {
+        ValueTask PingAsync();
+    }
+
 }

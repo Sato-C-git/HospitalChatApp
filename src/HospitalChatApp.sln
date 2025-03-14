@@ -17,6 +17,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MagicOnionSample.Shared", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MagicOnionSample.Client", "Samples\MagicOnionSample.Client\MagicOnionSample.Client.csproj", "{E91C6FF7-29CD-4996-B18B-5E3398E9A151}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MagicOnionSampleStreamingHub.Client", "Samples\MagicOnionSampleStreamingHub.Client\MagicOnionSampleStreamingHub.Client.csproj", "{A91E1DF2-CF64-4251-9604-97D5605F1B87}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -35,6 +37,10 @@ Global
 		{E91C6FF7-29CD-4996-B18B-5E3398E9A151}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E91C6FF7-29CD-4996-B18B-5E3398E9A151}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E91C6FF7-29CD-4996-B18B-5E3398E9A151}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A91E1DF2-CF64-4251-9604-97D5605F1B87}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A91E1DF2-CF64-4251-9604-97D5605F1B87}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A91E1DF2-CF64-4251-9604-97D5605F1B87}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A91E1DF2-CF64-4251-9604-97D5605F1B87}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -43,6 +49,7 @@ Global
 		{32C43F68-FCFC-48C9-9F8F-EA0DD8625B0E} = {8FE528BC-B5A3-447B-AAB8-6D25D323D1B2}
 		{CE6494D6-8DDE-4ADA-9107-677B68731105} = {8FE528BC-B5A3-447B-AAB8-6D25D323D1B2}
 		{E91C6FF7-29CD-4996-B18B-5E3398E9A151} = {8FE528BC-B5A3-447B-AAB8-6D25D323D1B2}
+		{A91E1DF2-CF64-4251-9604-97D5605F1B87} = {8FE528BC-B5A3-447B-AAB8-6D25D323D1B2}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B63FEF83-7090-4578-BBDB-3981FA6D0A00}
