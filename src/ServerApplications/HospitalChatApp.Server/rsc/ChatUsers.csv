@@ -1,0 +1,2 @@
+UserId,LoginId,PassWord,UserName,BirthDate,GenderCode,ZipCode,Address,Phone,Mobile,Email,PersonalNumber,DepartmentName,PositionName,CreatedAt,UpdatedAt,Deleted
+10000,,,Sato,01/01/0001 00:00:00,Default,0,,0,0,,,,,01/01/0001 00:00:00,01/01/0001 00:00:00,False
