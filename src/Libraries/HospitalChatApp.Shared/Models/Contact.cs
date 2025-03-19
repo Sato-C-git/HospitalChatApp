@@ -1,25 +1,29 @@
 ﻿namespace HospitalChatApp.Shared.Models;
 
 /// <summary>
-/// ルーム参加者の管理
+/// 連絡先の管理
 /// </summary>
-public class RoomParticipant
+public class Contact
 {
     /// <summary>
-    /// ルーム参加者の管理ID
+    /// 連絡先ID
     /// </summary>
-    public long RoomParticipantId { get; set; }
+    public long ContactId { get; set; }
 
     /// <summary>
-    /// 参加者が参加しているルームID
+    /// 連絡先を所有するユーザーID
     /// </summary>
-    public long RoomId { get; set; }
+    public long UserId { get; set; }
 
     /// <summary>
-    /// 参加者のユーザーID
+    /// 連絡先のユーザーID
     /// </summary>
-    public long UserID { get; set; }
+    public long ContactUserId { get; set; }
 
+    /// <summary>
+    /// 表示名
+    /// </summary>
+    public string DisplayName { get; set; }
 
     /// <summary>
     /// 作成日時

@@ -40,7 +40,7 @@ public class Message
     /// <summary>
     /// 通知のフラグ
     /// </summary>
-    public NotificationType NotificationType { get; set; }
+    public MessagePriority MessagePriority { get; set; }
 
     /// <summary>
     /// 作成日時

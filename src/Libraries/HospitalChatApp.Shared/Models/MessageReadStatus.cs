@@ -1,29 +1,24 @@
 ﻿namespace HospitalChatApp.Shared.Models;
 
 /// <summary>
-/// 連絡先の管理
+/// 既読の管理
 /// </summary>
-public class ContactInformation
+public class MessageReadStatus
 {
     /// <summary>
-    /// 連絡先ID
+    /// 既読ID
     /// </summary>
-    public long ContactInformationId { get; set; }
+    public long ReadStatusId { get; set; }
 
     /// <summary>
-    /// 連絡先を所有するユーザーID
+    /// メッセージID
+    /// </summary>
+    public long MessageId { get; set; }
+
+    /// <summary>
+    /// ユーザーID
     /// </summary>
     public long UserId { get; set; }
-
-    /// <summary>
-    /// 連絡先のユーザーID
-    /// </summary>
-    public long ContactUserId { get; set; }
-
-    /// <summary>
-    /// 表示名
-    /// </summary>
-    public string DisplayName { get; set; }
 
     /// <summary>
     /// 作成日時
@@ -39,4 +34,5 @@ public class ContactInformation
     /// 削除されたか
     /// </summary>
     public bool Deleted { get; set; }
+
 }

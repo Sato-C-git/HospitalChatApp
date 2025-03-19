@@ -1,11 +1,10 @@
 ﻿namespace HospitalChatApp.Shared.Enums;
 
 /// <summary>
-/// チャットの種類
+/// 通知のフラグ
 /// </summary>
-public enum ChatType
+public enum MessagePriority
 {
     Default = 0,
-    Private =1,
-    Group = 2,
+    High = 1,
 }

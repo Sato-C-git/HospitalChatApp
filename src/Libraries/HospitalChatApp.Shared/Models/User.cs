@@ -37,7 +37,7 @@ public class User
     /// <summary>
     /// 性別
     /// </summary>
-    public GenderType GenderCode { get; set; }
+    public SexType SexType { get; set; }
 
     /// <summary>
     /// 郵便番号

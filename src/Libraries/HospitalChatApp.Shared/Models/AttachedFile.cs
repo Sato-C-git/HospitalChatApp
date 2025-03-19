@@ -3,7 +3,7 @@
 /// <summary>
 /// ファイルの管理
 /// </summary>
-public class File
+public class AttachedFile
 {
     /// <summary>
     /// ファイルID

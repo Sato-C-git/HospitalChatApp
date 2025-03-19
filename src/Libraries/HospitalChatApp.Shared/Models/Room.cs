@@ -18,11 +18,6 @@ public class Room
     public string RoomName { get; set; }
 
     /// <summary>
-    /// チャットの種類
-    /// </summary>
-    public ChatType ChatType { get; set; }
-
-    /// <summary>
     /// ルーム作成者ID
     /// </summary>
     public long CreatedByUserId { get; set; }

@@ -1,24 +1,25 @@
 ﻿namespace HospitalChatApp.Shared.Models;
 
 /// <summary>
-/// 既読の管理
+/// ルーム参加者の管理
 /// </summary>
-public class ReadStatus
+public class RoomMember
 {
     /// <summary>
-    /// 既読ID
+    /// ルーム参加者の管理ID
     /// </summary>
-    public long ReadStatusId { get; set; }
+    public long RoomParticipantId { get; set; }
 
     /// <summary>
-    /// メッセージID
+    /// 参加者が参加しているルームID
     /// </summary>
-    public long MessageId { get; set; }
+    public long RoomId { get; set; }
 
     /// <summary>
-    /// ユーザーID
+    /// 参加者のユーザーID
     /// </summary>
-    public long UserId { get; set; }
+    public long UserID { get; set; }
+
 
     /// <summary>
     /// 作成日時
@@ -34,5 +35,4 @@ public class ReadStatus
     /// 削除されたか
     /// </summary>
     public bool Deleted { get; set; }
-
 }
