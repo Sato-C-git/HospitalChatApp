@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.Design;
 using HospitalChatApp.Shared.Models;
-using File = HospitalChatApp.Shared.Models.File;
+using AttachedFile = HospitalChatApp.Shared.Models.AttachedFile;
 
 namespace HospitalChatApp.Server;
 
@@ -15,17 +15,17 @@ public interface IEntityAccessor
     Task<Room[]> FetchRoomsWhereAsync(Func<Room, bool>? predicate = null);
     Task UpsertRoomsAsync(IEnumerable<Room> rooms);
 
-    Task<File[]> FetchFilesWhereAsync(Func<File, bool>? predicate=null);
-    Task UpsertFilesAsync(IEnumerable<File> files);
+    Task<AttachedFile[]> FetchAttachedFilesWhereAsync(Func<AttachedFile, bool>? predicate=null);
+    Task UpsertAttachedFilesAsync(IEnumerable<AttachedFile> attachedFiles);
 
-    Task<RoomParticipant[]> FetchRoomParticipantsWhereAsync(Func<RoomParticipant, bool>? predicate=null);
-    Task UpsertRoomParticipantsAsync(IEnumerable<RoomParticipant> roomParticipants);
+    Task<RoomMember[]> FetchRoomMembersWhereAsync(Func<RoomMember, bool>? predicate=null);
+    Task UpsertRoomMembersAsync(IEnumerable<RoomMember> roomMembers);
 
-    Task<ContactInformation[]> FetchContactInformationWhereAsync(Func<ContactInformation, bool>? predicate=null);
-    Task UpsertContactInformationAsync(IEnumerable<ContactInformation> contactInformation);
+    Task<Contact[]> FetchContactsWhereAsync(Func<Contact, bool>? predicate=null);
+    Task UpsertContactsAsync(IEnumerable<Contact> contacts);
 
-    Task<ReadStatus[]> FetchReadStatusesWhereAsync(Func<ReadStatus, bool>? predicate=null);
-    Task UpsertReadStatusesAsync(IEnumerable<ReadStatus> readStatuses);
+    Task<MessageReadStatus[]> FetchMessageReadStatusesWhereAsync(Func<MessageReadStatus, bool>? predicate=null);
+    Task UpsertMessageReadStatusesAsync(IEnumerable<MessageReadStatus> messageReadStatuses);
 
 
 }
