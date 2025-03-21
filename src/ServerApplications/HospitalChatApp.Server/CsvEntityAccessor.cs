@@ -12,6 +12,8 @@ namespace HospitalChatApp.Server;
 
 public class CsvEntityAccessor: IEntityAccessor
 {
+    private string _chatUsersCsvPath;
+
     //イニシャライズを作って初期に必要な処理を一括で行う。
     public async Task InitializeAsync()
     {
@@ -20,7 +22,6 @@ public class CsvEntityAccessor: IEntityAccessor
             .SetBasePath(Directory.GetCurrentDirectory())
             .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true).Build();
         var csvFilePath = config["ResourceFolderRelativePath"];
-        Console.WriteLine($"ログのファイルパス：{csvFilePath}");
 
         //exeの入ったフォルダの場所のパスを取得して絶対パスに変更
         var exePath = Assembly.GetEntryAssembly()?.Location;
@@ -33,8 +34,8 @@ public class CsvEntityAccessor: IEntityAccessor
             Directory.CreateDirectory(folderPath);
         }
 
-
-        await this.CreateCsvFileAsync(typeof(User), Path.Combine(folderPath, "ChatUsers.csv"));
+        this._chatUsersCsvPath = Path.Combine(folderPath, "ChatUsers.csv");
+        await this.CreateCsvFileAsync(typeof(User), this._chatUsersCsvPath);
         await this.CreateCsvFileAsync(typeof(AttachedFile), Path.Combine(folderPath, "ChatAttachedFiles.csv"));
         await this.CreateCsvFileAsync(typeof(Room), Path.Combine(folderPath, "ChatRooms.csv"));
         await this.CreateCsvFileAsync(typeof(RoomMember), Path.Combine(folderPath, "ChatRoomMembers.csv"));
@@ -57,14 +58,22 @@ public class CsvEntityAccessor: IEntityAccessor
 
 
     //ロードのイメージ。引数にほしい情報の条件にあったものだけをもってくる
-    public Task<User[]> FetchUsersWhereAsync(Func<User, bool>? predicate = null)
+    public async Task<User[]> FetchUsersWhereAsync(Func<User, bool>? predicate = null)
     {
+        var userInitialize = new CsvEntityAccessor();
         //条件などにあうUserの中配列やリストにして外に出す
-        throw new NotImplementedException();
+        //csvファイルを読み込んで、返却値として返す。
+        using var userReader = new StreamReader(_chatUsersCsvPath);
+        using var userCsv = new CsvReader(userReader, CultureInfo.InvariantCulture);
+        {
+            var users = await Task.Run(() => userCsv.GetRecords<User>().ToList());
+            return predicate == null ? users.ToArray() : users.Where(predicate).ToArray();
+        }
     }
 
     public async Task UpsertUsersAsync(IEnumerable<User> users)
     {
+        //Insert処理しかないので、update処理を図王権分岐で追加データの中身がnull→Insert
         //exeの入ったフォルダの場所のパスを取得して絶対パスに変更
         var exePath = Assembly.GetEntryAssembly()?.Location;
         if (exePath == null)

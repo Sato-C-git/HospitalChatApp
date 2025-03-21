@@ -15,7 +15,9 @@ app.MapGet("/test", async () =>
         UserId = 10000,
         UserName = "Sato",
     });
-    await accessor.InitializeAsync();
+    //await accessor.InitializeAsync();
+    await accessor.FetchUsersWhereAsync();
+    
 });
 
 app.Run();
