@@ -1,18 +1,27 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Globalization;
+using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
 using CsvHelper;
 using CsvHelper.Configuration;
 using HospitalChatApp.Shared.Models;
+using Microsoft.AspNetCore.SignalR;
 using AttachedFile = HospitalChatApp.Shared.Models.AttachedFile;
 
 namespace HospitalChatApp.Server;
 
-public class CsvEntityAccessor: IEntityAccessor
+public class CsvEntityAccessor : IEntityAccessor
 {
     private string _chatUsersCsvPath;
+    private string _chatFilesCsvPath;
+    private string _chatRoomsCsvPath;
+    private string _chatRoomMembersCsvPath;
+    private string _chatMessagesCsvPath;
+    private string _chatMessageReadStatusesCsvPath;
+    private string _chatContactsCsvPath;
 
     //イニシャライズを作って初期に必要な処理を一括で行う。
     public async Task InitializeAsync()
@@ -35,101 +44,159 @@ public class CsvEntityAccessor: IEntityAccessor
         }
 
         this._chatUsersCsvPath = Path.Combine(folderPath, "ChatUsers.csv");
+        this._chatFilesCsvPath = Path.Combine(folderPath, "ChatAttachedFiles.csv");
+        this._chatRoomsCsvPath = Path.Combine(folderPath, "ChatRooms.csv");
+        this._chatRoomMembersCsvPath = Path.Combine(folderPath, "ChatRoomMembers.csv");
+        this._chatMessagesCsvPath = Path.Combine(folderPath, "ChatMessages.csv");
+        this._chatMessageReadStatusesCsvPath = Path.Combine(folderPath, "ChatMessagesReadStatuses.csv");
+        this._chatContactsCsvPath = Path.Combine(folderPath, "ChatContacts.csv");
+
         await this.CreateCsvFileAsync(typeof(User), this._chatUsersCsvPath);
-        await this.CreateCsvFileAsync(typeof(AttachedFile), Path.Combine(folderPath, "ChatAttachedFiles.csv"));
-        await this.CreateCsvFileAsync(typeof(Room), Path.Combine(folderPath, "ChatRooms.csv"));
-        await this.CreateCsvFileAsync(typeof(RoomMember), Path.Combine(folderPath, "ChatRoomMembers.csv"));
-        await this.CreateCsvFileAsync(typeof(Message), Path.Combine(folderPath, "ChatMessages.csv"));
-        await this.CreateCsvFileAsync(typeof(MessageReadStatus), Path.Combine(folderPath, "ChatMessagesReadStatuses.csv"));
-        await this.CreateCsvFileAsync(typeof(Contact), Path.Combine(folderPath, "ChatContacts.csv"));
+        await this.CreateCsvFileAsync(typeof(AttachedFile), _chatFilesCsvPath);
+        await this.CreateCsvFileAsync(typeof(Room), _chatRoomsCsvPath);
+        await this.CreateCsvFileAsync(typeof(RoomMember), _chatRoomMembersCsvPath);
+        await this.CreateCsvFileAsync(typeof(Message), _chatMessagesCsvPath);
+        await this.CreateCsvFileAsync(typeof(MessageReadStatus), _chatMessageReadStatusesCsvPath);
+        await this.CreateCsvFileAsync(typeof(Contact), _chatContactsCsvPath);
     }
 
     private async Task CreateCsvFileAsync(Type entityType, string fullPath)
     {
-        if (!File.Exists(fullPath))
+        if (File.Exists(fullPath))
         {
-            // ファイルを作成
-            await using var fileStream = File.Create(fullPath);
+            return;
         }
+        // ファイルを作成
+        await using var fileStream = File.Create(fullPath);
         await using var writer = new StreamWriter(fullPath);
         await using var csv = new CsvWriter(writer, new CsvConfiguration(System.Globalization.CultureInfo.InvariantCulture));
         csv.WriteHeader(entityType);
+
+
     }
+
 
 
     //ロードのイメージ。引数にほしい情報の条件にあったものだけをもってくる
     public async Task<User[]> FetchUsersWhereAsync(Func<User, bool>? predicate = null)
     {
-        var userInitialize = new CsvEntityAccessor();
-        //条件などにあうUserの中配列やリストにして外に出す
+        //条件などにあうUserの中配列やリストにして外に出す.
         //csvファイルを読み込んで、返却値として返す。
         using var userReader = new StreamReader(_chatUsersCsvPath);
         using var userCsv = new CsvReader(userReader, CultureInfo.InvariantCulture);
-        {
-            var users = await Task.Run(() => userCsv.GetRecords<User>().ToList());
-            return predicate == null ? users.ToArray() : users.Where(predicate).ToArray();
-        }
+        var users = userCsv.GetRecordsAsync<User>();
+        return await (predicate == null ? users.ToArrayAsync() : users.Where(predicate).ToArrayAsync());
     }
 
     public async Task UpsertUsersAsync(IEnumerable<User> users)
     {
-        //Insert処理しかないので、update処理を図王権分岐で追加データの中身がnull→Insert
+        //Insert処理しかないので、update処理を図を権分岐でデータがない(null)→Insert
         //exeの入ったフォルダの場所のパスを取得して絶対パスに変更
-        var exePath = Assembly.GetEntryAssembly()?.Location;
-        if (exePath == null)
+        //fetchを呼び出す
+        List<User> existingUsers;
+        using var userReader = new StreamReader(_chatUsersCsvPath);
+        using (var userCsv = new CsvReader(userReader, CultureInfo.InvariantCulture))
         {
-            return;
+            existingUsers = await userCsv.GetRecordsAsync<User>().ToListAsync();
         }
-        var exeDirectory = Path.GetDirectoryName(exePath);
-        if (exeDirectory == null)
+        ;
+
+        foreach (var user in users)
         {
-            return;
-        }
-
-        var fileName = "ChatUsers.csv";
-        var folderPath = Path.Combine(exeDirectory,"Resources");
-
-
-        var fullPath = Path.Combine(folderPath, fileName);
-        if (!Directory.Exists(folderPath))
-        {
-            Directory.CreateDirectory(folderPath);
-        }
-
-        if (!System.IO.File.Exists(fullPath))
-        {
-            // ファイルを作成
-            await using (System.IO.File.Create(fullPath))
+            var index = existingUsers.FindIndex(u => u.UserId == user.UserId);
+            if (index != -1)
             {
-                Console.WriteLine("ファイルが存在しなかったため、新規作成しました。");
+                //update user data
+                //existingUserにuserの値を入れ替えたい
+                //existingUSersからindexの場所を削除→同じ場所にインサート(indexで指定）
+                existingUsers[index] = user;
+            }
+            else
+            {
+                //add new user data
+                existingUsers.Add(user);
             }
         }
-        await using var writer = new StreamWriter(fullPath, true);
+        await using var writer = new StreamWriter(_chatUsersCsvPath, false);
         await using var csv = new CsvWriter(writer, new CsvConfiguration(System.Globalization.CultureInfo.InvariantCulture));
-        csv.WriteHeader<User>(); //
-        //NextRecord:CSVデータの次の行に移動するために使用する。
-        await csv.NextRecordAsync();
-        await csv.WriteRecordsAsync(users);
+        await csv.WriteRecordsAsync(existingUsers);
+
+
     }
 
-    public Task<Message[]> FetchMessagesWhereAsync(Func<Message, bool>? predicate = null)
+    public async Task<Message[]> FetchMessagesWhereAsync(Func<Message, bool>? predicate = null)
     {
-        throw new NotImplementedException();
+        using var messageReader = new StreamReader(_chatMessagesCsvPath);
+        using var messageCsv = new CsvReader(messageReader, CultureInfo.InvariantCulture);
+        var messages = messageCsv.GetRecordsAsync<Message>();
+        return await(predicate == null ? messages.ToArrayAsync() : messages.Where(predicate).ToArrayAsync());
     }
 
-    public Task UpsertMessagesAsync(IEnumerable<Message> messages)
+    public async Task UpsertMessagesAsync(IEnumerable<Message> messages)
     {
-        throw new NotImplementedException();
+        List<Message> existingMessages;
+        using var messageReader = new StreamReader(_chatMessagesCsvPath);
+        using (var messageCsv = new CsvReader(messageReader, CultureInfo.InvariantCulture))
+        {
+            existingMessages = await messageCsv.GetRecordsAsync<Message>().ToListAsync();
+        }
+        ;
+
+        foreach (var message in messages)
+        {
+            var index = existingMessages.FindIndex(m => m.MessageId == message.MessageId);
+            if (index != -1)
+            {
+                //existingMssageからindexの場所を削除→同じ場所にインサート(indexで指定）
+                existingMessages[index] = message;
+            }
+            else
+            {
+                //add new data
+                existingMessages.Add(message);
+            }
+        }
+        await using var writer = new StreamWriter(_chatMessagesCsvPath, false);
+        await using var csv = new CsvWriter(writer, new CsvConfiguration(System.Globalization.CultureInfo.InvariantCulture));
+        await csv.WriteRecordsAsync(existingMessages);
     }
 
-    public Task<Room[]> FetchRoomsWhereAsync(Func<Room, bool>? predicate = null)
+    public async Task<Room[]> FetchRoomsWhereAsync(Func<Room, bool>? predicate = null)
     {
-        throw new NotImplementedException();
+        using var roomReader = new StreamReader(_chatRoomsCsvPath);
+        using var roomCsv = new CsvReader(roomReader, CultureInfo.InvariantCulture);
+        var rooms = roomCsv.GetRecordsAsync<Room>();
+        return await(predicate == null ? rooms.ToArrayAsync() : rooms.Where(predicate).ToArrayAsync());
     }
 
-    public Task UpsertRoomsAsync(IEnumerable<Room> rooms)
+    public async Task UpsertRoomsAsync(IEnumerable<Room> rooms)
     {
-        throw new NotImplementedException();
+        List<Room> existingrooms
+            ;
+        using var roomReader = new StreamReader(_chatRoomsCsvPath);
+        using (var roomCsv = new CsvReader(roomReader, CultureInfo.InvariantCulture))
+        {
+            existingrooms = await roomCsv.GetRecordsAsync<Room>().ToListAsync();
+        }
+        ;
+
+        foreach (var room in rooms)
+        {
+            var index = existingrooms.FindIndex(r => r.RoomId ==room.RoomId);
+            if (index != -1)
+            {
+                //existingroomからindexの場所を削除→同じ場所にインサート(indexで指定）
+                existingrooms[index] = room;
+            }
+            else
+            {
+                //add new data
+                existingrooms.Add(room);
+            }
+        }
+        await using var writer = new StreamWriter(_chatRoomsCsvPath, false);
+        await using var csv = new CsvWriter(writer, new CsvConfiguration(System.Globalization.CultureInfo.InvariantCulture));
+        await csv.WriteRecordsAsync(existingrooms);
     }
 
     public Task<AttachedFile[]> FetchAttachedFilesWhereAsync(Func<AttachedFile, bool>? predicate = null)

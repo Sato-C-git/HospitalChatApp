@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.Design;
+﻿using System.Collections;
+using System.ComponentModel.Design;
 using HospitalChatApp.Shared.Enums;
 
 namespace HospitalChatApp.Shared.Models;
