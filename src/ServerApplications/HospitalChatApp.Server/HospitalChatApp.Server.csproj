@@ -8,6 +8,8 @@
 
   <ItemGroup>
     <PackageReference Include="CsvHelper" Version="33.0.1" />
+    <PackageReference Include="MagicOnion.Abstractions" Version="7.0.2" />
+    <PackageReference Include="MagicOnion.Server" Version="7.0.2" />
     <PackageReference Include="System.Linq.Async" Version="6.0.1" />
   </ItemGroup>
 
