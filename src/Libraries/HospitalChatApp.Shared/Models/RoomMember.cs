@@ -8,7 +8,7 @@ public class RoomMember
     /// <summary>
     /// ルーム参加者の管理ID
     /// </summary>
-    public long RoomParticipantId { get; set; }
+    public long RoomMemberId { get; set; }
 
     /// <summary>
     /// 参加者が参加しているルームID

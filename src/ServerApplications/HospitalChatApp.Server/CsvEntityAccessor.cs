@@ -106,14 +106,13 @@ public class CsvEntityAccessor : IEntityAccessor
             var index = existingUsers.FindIndex(u => u.UserId == user.UserId);
             if (index != -1)
             {
-                //update user data
-                //existingUserにuserの値を入れ替えたい
-                //existingUSersからindexの場所を削除→同じ場所にインサート(indexで指定）
+                //update data
+                //existingUsersからindexの場所を削除→同じ場所にインサート(indexで指定）
                 existingUsers[index] = user;
             }
             else
             {
-                //add new user data
+                //add new data
                 existingUsers.Add(user);
             }
         }
@@ -147,7 +146,7 @@ public class CsvEntityAccessor : IEntityAccessor
             var index = existingMessages.FindIndex(m => m.MessageId == message.MessageId);
             if (index != -1)
             {
-                //existingMssageからindexの場所を削除→同じ場所にインサート(indexで指定）
+                //existingMessageからindexの場所を削除→同じ場所にインサート(indexで指定）
                 existingMessages[index] = message;
             }
             else
@@ -171,71 +170,181 @@ public class CsvEntityAccessor : IEntityAccessor
 
     public async Task UpsertRoomsAsync(IEnumerable<Room> rooms)
     {
-        List<Room> existingrooms
+        List<Room> existingRooms
             ;
         using var roomReader = new StreamReader(_chatRoomsCsvPath);
         using (var roomCsv = new CsvReader(roomReader, CultureInfo.InvariantCulture))
         {
-            existingrooms = await roomCsv.GetRecordsAsync<Room>().ToListAsync();
+            existingRooms = await roomCsv.GetRecordsAsync<Room>().ToListAsync();
         }
         ;
 
         foreach (var room in rooms)
         {
-            var index = existingrooms.FindIndex(r => r.RoomId ==room.RoomId);
+            var index = existingRooms.FindIndex(r => r.RoomId ==room.RoomId);
             if (index != -1)
             {
-                //existingroomからindexの場所を削除→同じ場所にインサート(indexで指定）
-                existingrooms[index] = room;
+                //existingRoomからindexの場所を削除→同じ場所にインサート(indexで指定）
+                existingRooms[index] = room;
             }
             else
             {
                 //add new data
-                existingrooms.Add(room);
+                existingRooms.Add(room);
             }
         }
         await using var writer = new StreamWriter(_chatRoomsCsvPath, false);
         await using var csv = new CsvWriter(writer, new CsvConfiguration(System.Globalization.CultureInfo.InvariantCulture));
-        await csv.WriteRecordsAsync(existingrooms);
+        await csv.WriteRecordsAsync(existingRooms);
     }
 
-    public Task<AttachedFile[]> FetchAttachedFilesWhereAsync(Func<AttachedFile, bool>? predicate = null)
+    public async Task<AttachedFile[]> FetchAttachedFilesWhereAsync(Func<AttachedFile, bool>? predicate = null)
     {
-        throw new NotImplementedException();
+        using var attachedFileReader = new StreamReader(_chatFilesCsvPath);
+        using var attachedFileCsv = new CsvReader(attachedFileReader, CultureInfo.InvariantCulture);
+        var attachedFiles = attachedFileCsv.GetRecordsAsync<AttachedFile>();
+        return await(predicate == null ? attachedFiles.ToArrayAsync() : attachedFiles.Where(predicate).ToArrayAsync());
     }
 
-    public Task UpsertAttachedFilesAsync(IEnumerable<AttachedFile> attachedFiles)
+    public async Task UpsertAttachedFilesAsync(IEnumerable<AttachedFile> attachedFiles)
     {
-        throw new NotImplementedException();
+        List<AttachedFile> existingAttachedFiles
+            ;
+        using var attachedFileReader = new StreamReader(_chatRoomsCsvPath);
+        using (var attachedFIleCsv = new CsvReader(attachedFileReader, CultureInfo.InvariantCulture))
+        {
+            existingAttachedFiles = await attachedFIleCsv.GetRecordsAsync<AttachedFile>().ToListAsync();
+        }
+        ;
+
+        foreach (var attachedFile in attachedFiles)
+        {
+            var index = existingAttachedFiles.FindIndex(f => f.FileId == attachedFile.FileId);
+            if (index != -1)
+            {
+                //existingAttachedFileからindexの場所を削除→同じ場所にインサート(indexで指定）
+                existingAttachedFiles[index] = attachedFile;
+            }
+            else
+            {
+                //add new data
+                existingAttachedFiles.Add(attachedFile);
+            }
+        }
+        await using var writer = new StreamWriter(_chatFilesCsvPath, false);
+        await using var csv = new CsvWriter(writer, new CsvConfiguration(System.Globalization.CultureInfo.InvariantCulture));
+        await csv.WriteRecordsAsync(existingAttachedFiles);
     }
 
-    public Task<RoomMember[]> FetchRoomMembersWhereAsync(Func<RoomMember, bool>? predicate = null)
+    public async Task<RoomMember[]> FetchRoomMembersWhereAsync(Func<RoomMember, bool>? predicate = null)
     {
-        throw new NotImplementedException();
+        using var reader = new StreamReader(_chatRoomMembersCsvPath);
+        using var csv = new CsvReader(reader, CultureInfo.InvariantCulture);
+        var roomMembers = csv.GetRecordsAsync<RoomMember>();
+        return await(predicate == null ? roomMembers.ToArrayAsync() : roomMembers.Where(predicate).ToArrayAsync());
     }
 
-    public Task UpsertRoomMembersAsync(IEnumerable<RoomMember> roomMembers)
+    public async Task UpsertRoomMembersAsync(IEnumerable<RoomMember> roomMembers)
     {
-        throw new NotImplementedException();
+        List<RoomMember> existingRoomMembers;
+        using var roomMemberReader = new StreamReader(_chatRoomMembersCsvPath);
+        using (var roomMemberCsv = new CsvReader(roomMemberReader, CultureInfo.InvariantCulture))
+        {
+            existingRoomMembers = await roomMemberCsv.GetRecordsAsync<RoomMember>().ToListAsync();
+        }
+        ;
+
+        foreach (var roomMember in roomMembers)
+        {
+            var index = existingRoomMembers.FindIndex(rm => rm.RoomMemberId == roomMember.RoomMemberId);
+            if (index != -1)
+            {
+                //existingRoomMemberからindexの場所を削除→同じ場所にインサート(indexで指定）
+                existingRoomMembers[index] = roomMember;
+            }
+            else
+            {
+                //add new data
+                existingRoomMembers.Add(roomMember);
+            }
+        }
+        await using var writer = new StreamWriter(_chatRoomMembersCsvPath, false);
+        await using var csv = new CsvWriter(writer, new CsvConfiguration(System.Globalization.CultureInfo.InvariantCulture));
+        await csv.WriteRecordsAsync(existingRoomMembers);
     }
 
-    public Task<Contact[]> FetchContactsWhereAsync(Func<Contact, bool>? predicate = null)
+    public async Task<Contact[]> FetchContactsWhereAsync(Func<Contact, bool>? predicate = null)
     {
-        throw new NotImplementedException();
+        using var contactReader = new StreamReader(_chatContactsCsvPath);
+        using var contactCsv = new CsvReader(contactReader, CultureInfo.InvariantCulture);
+        var contacts = contactCsv.GetRecordsAsync<Contact>();
+        return await(predicate == null ? contacts.ToArrayAsync() : contacts.Where(predicate).ToArrayAsync());
     }
 
-    public Task UpsertContactsAsync(IEnumerable<Contact> contacts)
+    public async Task UpsertContactsAsync(IEnumerable<Contact> contacts)
     {
-        throw new NotImplementedException();
+        List<Contact> existingContacts;
+        using var reader = new StreamReader(_chatContactsCsvPath);
+        using (var contactCsv = new CsvReader(reader, CultureInfo.InvariantCulture))
+        {
+            existingContacts = await contactCsv.GetRecordsAsync<Contact>().ToListAsync();
+        }
+        ;
+
+        foreach (var contact in contacts)
+        {
+            var index = existingContacts.FindIndex(c => c.ContactId == contact.ContactId);
+            if (index != -1)
+            {
+                //existingRoomMemberからindexの場所を削除→同じ場所にインサート(indexで指定）
+                existingContacts[index] = contact;
+            }
+            else
+            {
+                //add new data
+                existingContacts.Add(contact);
+            }
+        }
+        await using var writer = new StreamWriter(_chatContactsCsvPath, false);
+        await using var csv = new CsvWriter(writer, new CsvConfiguration(System.Globalization.CultureInfo.InvariantCulture));
+        await csv.WriteRecordsAsync(existingContacts);
     }
 
-    public Task<MessageReadStatus[]> FetchMessageReadStatusesWhereAsync(Func<MessageReadStatus, bool>? predicate = null)
+    public async Task<MessageReadStatus[]> FetchMessageReadStatusesWhereAsync(Func<MessageReadStatus, bool>? predicate = null)
     {
-        throw new NotImplementedException();
+        using var statusReader = new StreamReader(_chatMessageReadStatusesCsvPath);
+        using var readStatusCsv = new CsvReader(statusReader, CultureInfo.InvariantCulture);
+        var readStatuses = readStatusCsv.GetRecordsAsync<MessageReadStatus>();
+        return await(predicate == null ? readStatuses.ToArrayAsync() : readStatuses.Where(predicate).ToArrayAsync());
     }
 
-    public Task UpsertMessageReadStatusesAsync(IEnumerable<MessageReadStatus> messageReadStatuses)
+
+    public async Task UpsertMessageReadStatusesAsync(IEnumerable<MessageReadStatus> messageReadStatuses)
     {
-        throw new NotImplementedException();
+        List<MessageReadStatus> existingReadStatus;
+        using var reader = new StreamReader(_chatMessageReadStatusesCsvPath);
+        using (var readStatusCsv = new CsvReader(reader, CultureInfo.InvariantCulture))
+        {
+            existingReadStatus = await readStatusCsv.GetRecordsAsync<MessageReadStatus>().ToListAsync();
+        }
+        ;
+
+        foreach (var messageReadStatus in messageReadStatuses)
+        {
+            var index = existingReadStatus.FindIndex(s => s.ReadStatusId == messageReadStatus.ReadStatusId);
+            if (index != -1)
+            {
+                //existingReadStatusからindexの場所を削除→同じ場所にインサート(indexで指定）
+                existingReadStatus[index] = messageReadStatus;
+            }
+            else
+            {
+                //add new data
+                existingReadStatus.Add(messageReadStatus);
+            }
+        }
+        await using var writer = new StreamWriter(_chatMessageReadStatusesCsvPath, false);
+        await using var csv = new CsvWriter(writer, new CsvConfiguration(System.Globalization.CultureInfo.InvariantCulture));
+        await csv.WriteRecordsAsync(existingReadStatus);
     }
 }
