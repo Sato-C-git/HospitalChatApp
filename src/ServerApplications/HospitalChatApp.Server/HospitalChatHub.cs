@@ -11,6 +11,13 @@ public class HospitalChatHub : StreamingHubBase<IHospitalChatHub, IHospitalChatH
     IGroup<IHospitalChatHubReceiver>? room;
     string userName = "unknown";
 
+
+    public async Task<User?> LoginAsync(string loginId, string loginPassWord)
+    {
+        await Global.EntityAccessor.FetchUsersWhereAsync(user => user.LoginId == loginId && user.PassWord == loginPassWord);
+
+    }
+
     public async ValueTask JoinAsync(string roomName, string userName)
     {
         this.room = await Group.AddAsync(roomName);

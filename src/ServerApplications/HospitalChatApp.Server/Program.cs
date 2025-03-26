@@ -29,7 +29,8 @@ Global.EntityAccessor = accessor;
 
 
 
-
+builder.Services.AddSingleton<GroupService>();
+builder.Services.AddHostedService<MyBackgroundService>();
 builder.Services.AddMagicOnion();
 
 var app = builder.Build();
