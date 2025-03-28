@@ -19,6 +19,8 @@ var loginId = Console.ReadLine();
 Console.WriteLine("パスワードを入力してください.");
 var password = Console.ReadLine();
 await client.LoginAsync(loginId, password);
+var rooms = await client.GetRoomsAsync(Global.LoginUser.UserId);
+var message = await client.GetMessagesAsync(Global.EnterRoom.RoomName);
 
 await client.SendMessageAsync("Hello, world!");
 

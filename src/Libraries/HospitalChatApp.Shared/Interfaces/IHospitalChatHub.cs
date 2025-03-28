@@ -10,7 +10,9 @@ public interface IHospitalChatHub : IStreamingHub<IHospitalChatHub, IHospitalCha
     ValueTask LeaveAsync();
     ValueTask SendMessageAsync(string message);
 
-    Task GetRoomsAsync(string roomId, string roomName);
+    Task<Room[]> GetRoomsAsync(long userId);
+
+    Task<Message[]> GetMessagesAsync(string roomName);
 
     Task JoinRoomAsync(string roomName);
 }

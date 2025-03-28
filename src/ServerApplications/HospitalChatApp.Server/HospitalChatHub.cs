@@ -64,8 +64,15 @@ public class HospitalChatHub : StreamingHubBase<IHospitalChatHub, IHospitalChatH
 
     public async Task<Message[]> GetMessagesAsync(string roomName)
     {
-        var enteredRoom = roomName;
-        var rooms = await Global.EntityAccessor.FetchRoomsWhereAsync(r => r.RoomName == enteredRoom);
+        var enteredRoomName = roomName;
+        var enteredRoom = await Global.EntityAccessor.FetchRoomsWhereAsync(r => r.RoomName == enteredRoomName);
+        List<Room> room = new();
+        if (enteredRoom.Length == 1)
+        {
+            room.AddRange(enteredRoom);
+        }
+
+        var messages = await Global.EntityAccessor.FetchMessagesWhereAsync(m=>m.)
         return
     }
 
