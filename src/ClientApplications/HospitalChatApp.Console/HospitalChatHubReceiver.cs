@@ -19,6 +19,7 @@ public class HospitalChatHubReceiver : IHospitalChatHubReceiver
 
     public void OnLogin(User user)
     {
+        Global.LoginUser = user;
         System.Console.WriteLine($"{user.UserName}");
     }
 
@@ -26,8 +27,4 @@ public class HospitalChatHubReceiver : IHospitalChatHubReceiver
     {
         System.Console.WriteLine(message);
     }
-
-
-
-
 }

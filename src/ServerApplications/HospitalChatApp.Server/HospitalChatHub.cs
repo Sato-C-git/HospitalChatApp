@@ -1,4 +1,5 @@
-﻿using HospitalChatApp.Shared.Models;
+﻿using System.ComponentModel.Design.Serialization;
+using HospitalChatApp.Shared.Models;
 using HospitalChatApp.Shared.Interfaces;
 using MessagePack;
 using MagicOnion;
@@ -37,10 +38,37 @@ public class HospitalChatHub : StreamingHubBase<IHospitalChatHub, IHospitalChatH
         return;
     }
 
-    public async Task GetRoomsAsync(string roomName, string userId)
+    public async Task<Room[]> GetRoomsAsync(long userId)
     {
-        //var loginUser =
+        var loginUserId = userId;
+        var userRooms = await Global.EntityAccessor.FetchRoomMembersWhereAsync(roomMember => roomMember.UserId == loginUserId);
+
+        if (userRooms.Length == 0)
+        {
+            this.Client.OnOnlyMessage("参加しているルームがありません。" );
+        }
+
+        Console.WriteLine("ルーム一覧");
+        List<Room> rooms = new();
+        foreach (var userRoom in userRooms)
+        {
+            var room = await Global.EntityAccessor.FetchRoomsWhereAsync(r => r.RoomId == userRoom.RoomId);
+            if (room.Length == 1)
+            {
+                rooms.AddRange(room);
+            }
+        }
+
+        return rooms.ToArray();
     }
+
+    public async Task<Message[]> GetMessagesAsync(string roomName)
+    {
+        var enteredRoom = roomName;
+        var rooms = await Global.EntityAccessor.FetchRoomsWhereAsync(r => r.RoomName == enteredRoom);
+        return
+    }
+
 
     public async Task JoinRoomAsync(string roomNAme){}
 
