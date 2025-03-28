@@ -1,6 +1,7 @@
 ﻿
-using HospitalChatApp.Server;
+
 using HospitalChatApp.Shared.Interfaces;
+using HospitalChatApp.Shared.Models;
 
 namespace HospitalChatApp.Console;
 
@@ -15,4 +16,18 @@ public class HospitalChatHubReceiver : IHospitalChatHubReceiver
 
     public void OnOnlyMessage(string message)
         => System.Console.WriteLine($"{message}");
+
+    public void OnLogin(User user)
+    {
+        System.Console.WriteLine($"{user.UserName}");
+    }
+
+    public void OnLoginFailed(string message)
+    {
+        System.Console.WriteLine(message);
+    }
+
+
+
+
 }

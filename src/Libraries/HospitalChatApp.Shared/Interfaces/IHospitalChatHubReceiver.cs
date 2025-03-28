@@ -1,4 +1,6 @@
-﻿namespace HospitalChatApp.Shared.Interfaces;
+﻿using HospitalChatApp.Shared.Models;
+
+namespace HospitalChatApp.Shared.Interfaces;
 
 public interface IHospitalChatHubReceiver
 {
@@ -7,4 +9,8 @@ public interface IHospitalChatHubReceiver
     void OnMessage(string userName, string message);
 
     void OnOnlyMessage(string message);
+
+    void OnLogin(User user);
+
+    void OnLoginFailed(string message);
 }

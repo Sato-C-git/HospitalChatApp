@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\ServerApplications\HospitalChatApp.Server\HospitalChatApp.Server.csproj" />
+    <ProjectReference Include="..\..\Libraries\HospitalChatApp.Shared\HospitalChatApp.Shared.csproj" />
   </ItemGroup>
 
 </Project>

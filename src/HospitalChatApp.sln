@@ -20,6 +20,9 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MagicOnionSampleStreamingHub.Client", "Samples\MagicOnionSampleStreamingHub.Client\MagicOnionSampleStreamingHub.Client.csproj", "{A91E1DF2-CF64-4251-9604-97D5605F1B87}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HospitalChatApp.Console", "ClientApplications\HospitalChatApp.Console\HospitalChatApp.Console.csproj", "{5DEAC76F-FAEB-48DC-97AA-408432FC097E}"
+	ProjectSection(ProjectDependencies) = postProject
+		{6B614F82-7DCA-4F24-ABF9-05A818C29CFF} = {6B614F82-7DCA-4F24-ABF9-05A818C29CFF}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HospitalChatApp.Shared", "Libraries\HospitalChatApp.Shared\HospitalChatApp.Shared.csproj", "{6B614F82-7DCA-4F24-ABF9-05A818C29CFF}"
 EndProject
