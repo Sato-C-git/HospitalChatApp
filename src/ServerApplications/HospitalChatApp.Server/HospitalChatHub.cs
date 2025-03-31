@@ -7,14 +7,15 @@ using MagicOnion.Server;
 using MagicOnion.Server.Hubs;
 using MagicOnion.Serialization;
 using System.Diagnostics.Contracts;
+using Cysharp.Runtime.Multicast;
 
 namespace HospitalChatApp.Server;
 
-public class HospitalChatHub : StreamingHubBase<IHospitalChatHub, IHospitalChatHubReceiver>, IHospitalChatHub
+public class HospitalChatHub(IMulticastGroupProvider groupProvider) : StreamingHubBase<IHospitalChatHub, IHospitalChatHubReceiver>, IHospitalChatHub
 {
-    IGroup<IHospitalChatHubReceiver>? room;
-    string userName = "unknown";
+    private GroupService group = new GroupService(groupProvider);
 
+    string userName = "unknown";
 
     public async Task LoginAsync(string loginId, string loginPassword)
     {
@@ -33,7 +34,7 @@ public class HospitalChatHub : StreamingHubBase<IHospitalChatHub, IHospitalChatH
         }
         this.Client.OnLogin(loginUser);
 
-        this.room = await Group.AddAsync(loginUser.UserId.ToString());
+        this.group.AddMember(this.Client, loginUser.UserId);
     }
 
     private bool IsPasswordValid(string loginPassword, User registeredUser)
@@ -75,19 +76,19 @@ public class HospitalChatHub : StreamingHubBase<IHospitalChatHub, IHospitalChatH
 
     public async ValueTask JoinAsync(string roomName, string userName)
     {
-        this.room = await Group.AddAsync(roomName);
-        this.userName = userName;
-        this.room.All.OnJoin(userName);
+        //this.group = await Group.AddAsync(roomName);
+        //this.userName = userName;
+        //this.group.All.OnJoin(userName);
 
-        this.Client.OnMessage("System", $"Welcome, hello {userName}!");
-        this.room.All.OnOnlyMessage("Hello, world!");
+        //this.Client.OnMessage("System", $"Welcome, hello {userName}!");
+        //this.group.All.OnOnlyMessage("Hello, world!");
     }
 
 
     public async ValueTask LeaveAsync()
     {
-        this.room.All.OnLeave(ConnectionId.ToString());
-        await this.room.RemoveAsync(Context);
+        //this.group.All.OnLeave(ConnectionId.ToString());
+        //await this.group.RemoveAsync(Context);
     }
 
     public async ValueTask SendMessageAsync(long roomId, long userId, string message)
@@ -106,7 +107,10 @@ public class HospitalChatHub : StreamingHubBase<IHospitalChatHub, IHospitalChatH
             Deleted = false
         };
 
-        this.room.All.OnMessage("", message);
+        var roomMembers = await Global.EntityAccessor.FetchRoomMembersWhereAsync(r => r.RoomId == roomId);
+        var roomUserIds = roomMembers.Select(r => r.UserId);
+        this.group.SendMessageToOnly(message, roomUserIds);
+
 
         var messageLogs = new List<Message>();
         messageLogs.Add(messageLog);

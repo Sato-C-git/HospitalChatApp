@@ -8,13 +8,15 @@ namespace HospitalChatApp.Server;
 /// <param name="groupProvider"></param>
 public class GroupService(IMulticastGroupProvider groupProvider) : IDisposable
 {
-    private readonly IMulticastSyncGroup<Guid, IHospitalChatMyHubReceiver> _group =
-        groupProvider.GetOrAddSynchronousGroup<Guid, IHospitalChatMyHubReceiver>("HospitalGroup");
+    private readonly IMulticastSyncGroup<long, IHospitalChatHubReceiver> _group =
+        groupProvider.GetOrAddSynchronousGroup<long, IHospitalChatHubReceiver>("HospitalGroup");
 
-    public void SendMessageToAll(string message) => _group.All.OnMessage(message);
+    public void SendMessageToAll(string message) => _group.All.OnOnlyMessage(message);
 
-    public void AddMember(IHospitalChatMyHubReceiver receiver) => _group.Add(receiver.ContextId, receiver);
-    public void RemoveMember(IHospitalChatMyHubReceiver receiver) => _group.Remove(receiver.ContextId);
+    public void SendMessageToOnly(string message, IEnumerable<long> ids) => _group.Only(ids).OnOnlyMessage(message);
+
+    public void AddMember(IHospitalChatHubReceiver receiver, long userId) => _group.Add(userId ,receiver);
+    public void RemoveMember(long userId) => _group.Remove(userId);
 
 
     public void Dispose() => _group.Dispose();

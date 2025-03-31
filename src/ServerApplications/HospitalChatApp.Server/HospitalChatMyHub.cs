@@ -7,13 +7,13 @@ public class HospitalChatMyHub(GroupService groupService) : StreamingHubBase<IHo
 {
     protected override ValueTask OnConnected()
     {
-        groupService.AddMember(Client);
+        //groupService.AddMember(Client);
         return default;
     }
 
     protected override ValueTask OnDisconnected()
     {
-        groupService.RemoveMember(Client);
+        //groupService.RemoveMember(Client);
         return default;
     }
 
