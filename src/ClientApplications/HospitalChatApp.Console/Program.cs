@@ -2,6 +2,7 @@
 
 // See https://aka.ms/new-console-template for more information
 
+using System.Text;
 using Grpc.Net.Client;
 using HospitalChatApp.Console;
 using HospitalChatApp.Shared.Interfaces;
@@ -20,7 +21,16 @@ Console.WriteLine("パスワードを入力してください.");
 var password = Console.ReadLine();
 await client.LoginAsync(loginId, password);
 var rooms = await client.GetRoomsAsync(Global.LoginUser.UserId);
-var message = await client.GetMessagesAsync(Global.EnterRoom.RoomName);
+var messages = await client.GetMessagesAsync(1);
+
+var sb = new StringBuilder();
+foreach (var message in messages)
+{
+    sb.AppendLine(message.Content);
+}
+Console.WriteLine(sb);
+
+
 
 await client.SendMessageAsync("Hello, world!");
 

@@ -12,7 +12,7 @@ public interface IHospitalChatHub : IStreamingHub<IHospitalChatHub, IHospitalCha
 
     Task<Room[]> GetRoomsAsync(long userId);
 
-    Task<Message[]> GetMessagesAsync(string roomName);
+    //ToDo:ユーザーの情報も返す
+    Task<Message[]> GetMessagesAsync(long roomId);
 
-    Task JoinRoomAsync(string roomName);
 }

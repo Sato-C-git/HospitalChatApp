@@ -62,22 +62,13 @@ public class HospitalChatHub : StreamingHubBase<IHospitalChatHub, IHospitalChatH
         return rooms.ToArray();
     }
 
-    public async Task<Message[]> GetMessagesAsync(string roomName)
+    public async Task<Message[]> GetMessagesAsync(long roomId)
     {
-        var enteredRoomName = roomName;
-        var enteredRoom = await Global.EntityAccessor.FetchRoomsWhereAsync(r => r.RoomName == enteredRoomName);
-        List<Room> room = new();
-        if (enteredRoom.Length == 1)
-        {
-            room.AddRange(enteredRoom);
-        }
-
-        var messages = await Global.EntityAccessor.FetchMessagesWhereAsync(m=>m.)
-        return
+        var messages = await Global.EntityAccessor.FetchMessagesWhereAsync(m => m.RoomId == roomId);
+        return messages;
     }
 
 
-    public async Task JoinRoomAsync(string roomNAme){}
 
     public async ValueTask JoinAsync(string roomName, string userName)
     {
@@ -100,6 +91,7 @@ public class HospitalChatHub : StreamingHubBase<IHospitalChatHub, IHospitalChatH
     {
         this.room.All.OnMessage(userName, message);
     }
+
 
     public async Task EchoAsync(string message)
     {
