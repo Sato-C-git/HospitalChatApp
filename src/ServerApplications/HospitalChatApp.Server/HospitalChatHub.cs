@@ -33,7 +33,7 @@ public class HospitalChatHub : StreamingHubBase<IHospitalChatHub, IHospitalChatH
         }
         this.Client.OnLogin(loginUser);
 
-        this.room = await Group.AddAsync("");
+        this.room = await Group.AddAsync(loginUser.UserId.ToString());
     }
 
     private bool IsPasswordValid(string loginPassword, User registeredUser)
@@ -51,7 +51,7 @@ public class HospitalChatHub : StreamingHubBase<IHospitalChatHub, IHospitalChatH
             this.Client.OnOnlyMessage("参加しているルームがありません。" );
         }
 
-        Console.WriteLine("ルーム一覧");
+        //Console.WriteLine("ルーム一覧");
         List<Room> rooms = new();
         foreach (var userRoom in userRooms)
         {
@@ -117,5 +117,12 @@ public class HospitalChatHub : StreamingHubBase<IHospitalChatHub, IHospitalChatH
     public async Task EchoAsync(string message)
     {
         this.Client.OnOnlyMessage("Echo: " + message);
+    }
+
+
+    public async Task<Room[]> selectRoom(string roomName)
+    {
+        var rooms = await Global.EntityAccessor.FetchRoomsWhereAsync(r => r.RoomName == roomName);
+        return rooms;
     }
 }

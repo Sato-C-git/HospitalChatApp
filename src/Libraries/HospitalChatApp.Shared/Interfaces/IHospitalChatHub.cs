@@ -15,6 +15,6 @@ public interface IHospitalChatHub : IStreamingHub<IHospitalChatHub, IHospitalCha
     //ToDo:ユーザーの情報も返す
     Task<Message[]> GetMessagesAsync(long roomId);
 
-    //Task<Message[]> SendMessageAsync(string message);
+    Task<Room[]> selectRoom(string roomName);
 
 }

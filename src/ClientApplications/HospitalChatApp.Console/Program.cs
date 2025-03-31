@@ -20,8 +20,22 @@ var loginId = Console.ReadLine();
 Console.WriteLine("パスワードを入力してください.");
 var password = Console.ReadLine();
 await client.LoginAsync(loginId, password);
+
 var rooms = await client.GetRoomsAsync(Global.LoginUser.UserId);
-var messages = await client.GetMessagesAsync(1);
+var stringBuilder = new StringBuilder();
+foreach (var room in rooms)
+{
+    stringBuilder.AppendLine($"{room.RoomId} : {room.RoomName}");
+
+}
+Console.WriteLine(stringBuilder);
+
+Console.WriteLine("ルームを選択：");
+var roomId = Console.ReadLine();
+long.TryParse(roomId, out var roomIdLong);
+
+
+var messages = await client.GetMessagesAsync(roomIdLong);
 
 var sb = new StringBuilder();
 foreach (var message in messages)
@@ -33,7 +47,7 @@ Console.WriteLine(sb);
 Console.WriteLine("メッセージ入力：");
 var content = Console.ReadLine();
 
-await client.SendMessageAsync(1, Global.LoginUser.UserId, content);
+await client.SendMessageAsync(roomIdLong, Global.LoginUser.UserId, content);
 
 while (true)
 {
