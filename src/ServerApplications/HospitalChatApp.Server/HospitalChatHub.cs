@@ -26,16 +26,19 @@ public class HospitalChatHub : StreamingHubBase<IHospitalChatHub, IHospitalChatH
             return;
         }
 
-        foreach (var user in longinIdStatus)
+        if (longinIdStatus.FirstOrDefault(user => IsPasswordValid(loginPassword, user)) is not { } loginUser )
         {
-            if (user.Password == loginPassword)
-            {
-                this.Client.OnLogin(user);
-                return;
-            }
+            this.Client.OnLoginFailed("Passwordが一致しません");
+            return;
         }
-        this.Client.OnLoginFailed("Passwordが一致しません");
-        return;
+        this.Client.OnLogin(loginUser);
+
+        this.room = await Group.AddAsync("");
+    }
+
+    private bool IsPasswordValid(string loginPassword, User registeredUser)
+    {
+        return loginPassword == registeredUser.Password;
     }
 
     public async Task<Room[]> GetRoomsAsync(long userId)
@@ -102,6 +105,8 @@ public class HospitalChatHub : StreamingHubBase<IHospitalChatHub, IHospitalChatH
             UpdatedAt = DateTime.Now,
             Deleted = false
         };
+
+        this.room.All.OnMessage("", message);
 
         var messageLogs = new List<Message>();
         messageLogs.Add(messageLog);
