@@ -87,9 +87,25 @@ public class HospitalChatHub : StreamingHubBase<IHospitalChatHub, IHospitalChatH
         await this.room.RemoveAsync(Context);
     }
 
-    public async ValueTask SendMessageAsync(string message)
+    public async ValueTask SendMessageAsync(long roomId, long userId, string message)
     {
-        this.room.All.OnMessage(userName, message);
+        Message messageLog = new()
+        {
+            RoomId = roomId,
+            SendUserId = userId,
+            Content = message,
+            SendDateTime = DateTime.Now,
+            Edited = false,
+            Pinned = false,
+            MessagePriority = 0,
+            CreatedAt = DateTime.Now,
+            UpdatedAt = DateTime.Now,
+            Deleted = false
+        };
+
+        var messageLogs = new List<Message>();
+        messageLogs.Add(messageLog);
+        await Global.EntityAccessor.UpsertMessagesAsync(messageLogs);
     }
 
 

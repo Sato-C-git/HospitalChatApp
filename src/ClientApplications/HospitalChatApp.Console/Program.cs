@@ -30,9 +30,10 @@ foreach (var message in messages)
 }
 Console.WriteLine(sb);
 
+Console.WriteLine("メッセージ入力：");
+var content = Console.ReadLine();
 
-
-await client.SendMessageAsync("Hello, world!");
+await client.SendMessageAsync(1, Global.LoginUser.UserId, content);
 
 while (true)
 {

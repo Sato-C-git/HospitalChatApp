@@ -8,11 +8,13 @@ public interface IHospitalChatHub : IStreamingHub<IHospitalChatHub, IHospitalCha
     Task LoginAsync(string loginId, string password);
     ValueTask JoinAsync(string roomName, string userName);
     ValueTask LeaveAsync();
-    ValueTask SendMessageAsync(string message);
+    ValueTask SendMessageAsync(long roomId, long userId, string message);
 
     Task<Room[]> GetRoomsAsync(long userId);
 
     //ToDo:ユーザーの情報も返す
     Task<Message[]> GetMessagesAsync(long roomId);
+
+    //Task<Message[]> SendMessageAsync(string message);
 
 }

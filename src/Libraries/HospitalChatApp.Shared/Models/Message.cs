@@ -22,16 +22,16 @@ public class Message
     public long RoomId { get; set; }
 
     /// <summary>
-    /// メッセージ内容
-    /// </summary>
-    [Key(2)]
-    public string Content { get; set; }
-
-    /// <summary>
     /// 送信者ユーザーID
     /// </summary>
     [Key(3)]
     public long SendUserId { get; set; }
+
+    /// <summary>
+    /// メッセージ内容
+    /// </summary>
+    [Key(2)]
+    public string Content { get; set; }
 
     /// <summary>
     /// 送信日時

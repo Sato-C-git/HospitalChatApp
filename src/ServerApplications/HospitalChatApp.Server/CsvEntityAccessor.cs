@@ -153,6 +153,7 @@ public class CsvEntityAccessor : IEntityAccessor
             {
                 //add new data
                 existingMessages.Add(message);
+                message.MessageId = existingMessages.MaxBy(m => m.MessageId)?.MessageId ?? 0;
             }
         }
         await using var writer = new StreamWriter(_chatMessagesCsvPath, false);
