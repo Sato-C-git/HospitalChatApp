@@ -18,6 +18,11 @@ public class Message
     public long RoomId { get; set; }
 
     /// <summary>
+    /// メッセージ内容
+    /// </summary>
+    public string Content { get; set; }
+
+    /// <summary>
     /// 送信者ユーザーID
     /// </summary>
     public long SendUserId { get; set; }
